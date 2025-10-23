@@ -48,6 +48,11 @@ terminusdb-woql2 = { path = "../woql2" }
 terminusdb-relation = { path = "../relation" }
 reqwest = "0.11"
 
+# https://github.com/mozilla/cbindgen/blob/main/docs.md#internal-representation
+[build-dependencies]
+cbindgen = "0.24.0"
+
+
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 tokio = "1"
 tokio-test = "0.3.0"
