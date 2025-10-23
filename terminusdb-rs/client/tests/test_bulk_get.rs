@@ -1,0 +1,105 @@
+//! Test file to verify the new bulk document retrieval functionality
+//!
+//! These tests verify that the new get_documents() and get_instances() methods
+//! work correctly with the enhanced GetOpts structure.
+
+#[cfg(test)]
+mod tests {
+    use terminusdb_client::GetOpts;
+
+    #[test]
+    fn test_get_opts_builder_pattern() {
+        // Test that GetOpts can be built using the fluent builder pattern
+        let opts = GetOpts::default()
+            .with_skip(10)
+            .with_count(5)
+            .with_type_filter_string("Person") // Use string version for testing
+            .with_unfold(true)
+            .with_as_list(true);
+
+        assert_eq!(opts.skip, Some(10));
+        assert_eq!(opts.count, Some(5));
+        assert_eq!(opts.type_filter, Some("Person".to_string()));
+        assert_eq!(opts.unfold, true);
+        assert_eq!(opts.as_list, true);
+    }
+
+    #[test]
+    fn test_get_opts_constructors() {
+        // Test paginated constructor
+        let paginated = GetOpts::paginated(5, 20);
+        assert_eq!(paginated.skip, Some(5));
+        assert_eq!(paginated.count, Some(20));
+        assert_eq!(paginated.unfold, false);
+        assert_eq!(paginated.as_list, false);
+
+        // Note: Type-filtered constructor test commented out as it requires a concrete type
+        // that implements TerminusDBModel to test properly
+        //
+        // let filtered = GetOpts::filtered_by_type::<SomeType>();
+        // assert_eq!(filtered.type_filter, Some("SomeType".to_string()));
+    }
+
+    #[test]
+    fn test_default_get_opts() {
+        let opts = GetOpts::default();
+        assert_eq!(opts.skip, None);
+        assert_eq!(opts.count, None);
+        assert_eq!(opts.type_filter, None);
+        assert_eq!(opts.unfold, false);
+        assert_eq!(opts.as_list, false);
+        assert_eq!(opts.minimized, true);
+    }
+
+    #[test]
+    fn test_get_opts_minimized_default() {
+        // Unit test to verify GetOpts default for minimized
+        let opts = GetOpts::default();
+        assert!(opts.minimized, "GetOpts should default to minimized=true");
+    }
+
+    #[test]
+    fn test_get_opts_minimized_builder() {
+        // Test the builder pattern for minimized
+        let opts = GetOpts::default()
+            .with_minimized(false)
+            .with_unfold(true)
+            .with_count(10);
+        
+        assert!(!opts.minimized, "minimized should be false");
+        assert!(opts.unfold, "unfold should be true");
+        assert_eq!(opts.count, Some(10), "count should be 10");
+    }
+
+    // Note: The following would be integration tests that require a running TerminusDB instance
+    // They are commented out to avoid test failures in CI
+
+    /*
+    #[tokio::test]
+    async fn test_get_documents_integration() {
+        // This would test the actual API call
+        let client = TerminusDBHttpClient::local_node();
+        let spec = BranchSpec::new("admin", "test_db", Some("main"));
+
+        let ids = vec!["Person/alice".to_string(), "Person/bob".to_string()];
+        let opts = GetOpts::default().with_unfold(true);
+
+        let result = client.get_documents(ids, &spec, opts).await;
+        // Would assert based on expected data
+    }
+
+    #[tokio::test]
+    async fn test_get_instances_integration() {
+        // This would test the typed API call
+        let client = TerminusDBHttpClient::local_node();
+        let spec = BranchSpec::new("admin", "test_db", Some("main"));
+        let mut deserializer = DefaultDeserializer::new();
+
+        let ids = vec!["alice_id".to_string(), "bob_id".to_string()];
+        let opts = GetOpts::paginated(0, 10);
+
+        let result: Result<Vec<Person>, _> = client.get_instances(ids, &spec, opts, &mut deserializer).await;
+        // Would assert based on expected data
+    }
+    */
+}
