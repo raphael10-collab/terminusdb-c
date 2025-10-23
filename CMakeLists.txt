@@ -101,6 +101,6 @@ function(compile_example TARGET_NAME)
         ${ARGV})
     target_link_libraries(
         ${TARGET_NAME}
-        questdb_client)
+        terminusdb_client)
 endfunction()
 
