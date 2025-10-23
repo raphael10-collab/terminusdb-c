@@ -1,0 +1,44 @@
+language = "C++"
+
+pragma_once = true
+
+autogen_warning = "// This header is auto-generated. Do not edit directly!"
+
+# A list of sys headers to #include (with angle brackets)
+# default: []
+sys_includes = ["stdint.h", "stddef.h", "stdbool.h"]
+
+# A list of headers to #include (with quotes)
+# default: []
+includes = []  # ["my_great_lib.h"]
+
+# Suppress cbindgen's default includes.
+no_includes = true
+
+after_includes = """
+#if defined(LINESENDER_DYN_LIB) && defined(_MSC_VER)
+#    define LINESENDER_API __declspec(dllimport)
+#else
+#    define LINESENDER_API
+#endif
+"""
+
+# #ifdef __cplusplus
+# extern "C" {
+# #endif // __cplusplus
+cpp_compat = true
+
+# Code Style Options
+braces = "NextLine"
+line_length = 79
+tab_width = 4
+documentation = true
+documentation_style = "doxy"
+
+# Codegen Options
+style = "type"
+usize_is_size_t = true
+
+[fn]
+prefix = "LINESENDER_API"
+args = "vertical"

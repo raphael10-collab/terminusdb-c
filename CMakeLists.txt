@@ -52,24 +52,16 @@ corrosion_import_crate(
     #terminusdb_client INTERFACE
     #${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(WIN32)
-    set_target_properties(
-        terminusdb_client-shared
-        PROPERTIES
-        DEFINE_SYMBOL "LINESENDER_DYN_LIB")
-    target_link_libraries(
-        terminusdb_client-shared
-        INTERFACE wsock32 ws2_32 ntdll crypt32 Secur32 Ncrypt)
-    target_link_libraries(
-        terminusdb_client-static
-        INTERFACE wsock32 ws2_32 ntdll crypt32 Secur32 Ncrypt)
+    #set_target_properties(
+        #terminusdb_client-shared
+        #PROPERTIES
+        #DEFINE_SYMBOL "LINESENDER_DYN_LIB")
+    target_link_libraries(terminusdb_client-shared)
+    target_link_libraries(terminusdb_client-static)
 endif(WIN32)
 if(APPLE)
-    target_link_libraries(
-        terminusdb_client
-        INTERFACE "-framework Security")
-    target_link_libraries(
-        terminusdb_client
-        INTERFACE "-framework CoreFoundation")
+    target_link_libraries(terminusdb_client)
+    target_link_libraries(terminusdb_client)
 endif()
 
 function(set_compile_flags TARGET_NAME)
